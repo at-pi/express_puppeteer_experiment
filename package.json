@@ -1,0 +1,28 @@
+{
+  "name": "express_puppeteer_experiment",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "devStart": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/at-pi/express_puppeteer_experiment.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/at-pi/express_puppeteer_experiment/issues"
+  },
+  "homepage": "https://github.com/at-pi/express_puppeteer_experiment#readme",
+  "dependencies": {
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "puppeteer": "^13.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
