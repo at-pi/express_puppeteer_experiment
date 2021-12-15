@@ -33,7 +33,6 @@ const redirect = async (browser, url, res) => {
     
     res.status(200).send('redirected')
 
-    return browser
 }
 
 const close = async (browser, res) => {
@@ -70,7 +69,7 @@ router.get('/url', (req,res) => {
 
             if( id == item.id){
 
-                item.browser = close(item.browser, res)
+                close(item.browser, res)
                 storage.splice((id),1)
             }
         })
