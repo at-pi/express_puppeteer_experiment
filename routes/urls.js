@@ -2,24 +2,45 @@ const express = require("express")
 const router = express.Router()
 const puppeteer = require('puppeteer')
 
-
 let storage = []
 let i = 0;
 
-const func = async (url) => {
-    const browser = await puppeteer.launch()
-    const page = await browser.newPage()
+const openBrowser = async (url, res) => {
+
+    const browser = await puppeteer.launch({ headless:false })
+    let pages2 = await browser.pages()
+    const page = pages2[0]
     await page.goto(url)
 
-    return page
+    let pages1 = await browser.pages();
+
+    let obj = {
+        'id' : i,
+        'browser' : browser
+    }
+    storage.push(obj)
+    
+    res.status(200).send('opened browser success, id:'+ i++)
+
+    return browser
 }
 
-const func2 = async (page, url) => {
-    const browser = await puppeteer.launch()
-    page = await browser.newPage()
+const redirect = async (browser, url, res) => {
+    
+    let page = (await browser.pages())
+    page = page[0]
     await page.goto(url)
     
-    return page
+    res.status(200).send('redirected')
+
+    return browser
+}
+
+const close = async (browser, res) => {
+    
+    let page = await browser.close()
+
+    res.status(200).send('closed')
 }
 
 router.get('/url', (req,res) => {
@@ -29,51 +50,28 @@ router.get('/url', (req,res) => {
 
     if( id == null){
 
-        const page = new Promise((resolve, reject) => {
-            func(url)
-            .then( page => {
-                console.log('successfully opened '+url)
-                resolve(page)
-            })
-            .catch( err => reject('failed in opening url'))
-        })
-    
-        Promise.all([page])
-        .then( page => {
-            let obj = {
-                'id' : i++,
-                'browser' : page
-            }
-            storage.push(obj)
-            res.send('opened browser success, id:'+ i)
-        })
+        openBrowser(url, res)
+
     }
-    else{
-        console.log(storage)
+    else if( id!=null && url!=null) {
 
         storage.forEach( function(item) {
 
-            console.log(item.id)
-            console.log(item.browser)
+            if( id == item.id){
+
+                redirect(item.browser, url, res)
+            
+            }
+        })
+    }
+    else{
+
+        storage.forEach( function(item) {
 
             if( id == item.id){
 
-                item.browser = new Promise( (resolve, reject) => {
-                    func2(item.browser, url)
-                    .then( page => {
-                        console.log('successfully shifted the page')
-                        resolve(page)
-                    })
-                    .catch( err => reject('could not shift the page'))
-                })
+                item.browser = close(item.browser, res)
 
-                Promise.all([item.browser])
-                .then( page => {
-                    res.send(item.id+' '+item.browser)
-                    console.log(item.browser)
-                })
-                
-                return false
             }
         })
     }
