@@ -71,7 +71,7 @@ router.get('/url', (req,res) => {
             if( id == item.id){
 
                 item.browser = close(item.browser, res)
-
+                storage.splice((id),1)
             }
         })
     }
